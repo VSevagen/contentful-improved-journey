@@ -75,7 +75,7 @@ const updateEntry = async (entry) => {
         [LOCAL] :'New entry description'
       };
       
-      entry.fields.slug[LOCAL] = slugify(entry?.fields?.retailerName?.[LOCAL]);
+      entry.fields.slug[LOCAL] = entry?.fields?.retailerName?.[LOCAL] ? slugify(entry?.fields?.retailerName?.[LOCAL]) : "";
       
       let updatedEntry = await entry.update();
 
@@ -91,7 +91,7 @@ const updateEntry = async (entry) => {
       }
     }
   } catch (err) {
-    log(`Error occured on updateEntry step `, err);
+    log(`Error occured on updateEntry step ${entry?.sys?.id}`);
   }
 }
 
