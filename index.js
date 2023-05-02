@@ -74,11 +74,9 @@ const updateEntry = async (entry) => {
       entry.fields['slug'] = {
         [LOCAL] :'New entry description'
       };
-      
-      entry.fields.slug[LOCAL] = entry?.fields?.retailerName?.[LOCAL] ? slugify(entry?.fields?.retailerName?.[LOCAL]) : "";
+      entry.fields.slug[LOCAL] = entry?.fields?.title?.[LOCAL] ? slugify(entry?.fields?.title?.[LOCAL]) : "";
       
       let updatedEntry = await entry.update();
-
       //if state="changed" return;
       if(entry.isUpdated()) {
         return;
@@ -86,12 +84,12 @@ const updateEntry = async (entry) => {
 
       if(entry.isPublished()) {
         let publishedEntry = await updatedEntry.publish();
-        log(`Published ${publishedEntry?.fields?.retailerName[LOCAL]} id=${publishedEntry?.sys?.id}`)
+        log(`Published ${publishedEntry?.fields?.title[LOCAL]} id=${publishedEntry?.sys?.id}`)
         return publishedEntry;
       }
     }
   } catch (err) {
-    log(`Error occured on updateEntry step ${entry?.sys?.id}`);
+    log(`Error occured on updateEntry step ${entry?.sys?.id}, ${err}`);
   }
 }
 
@@ -104,22 +102,25 @@ const run = async () => {
     // Get contentful environment
     let environment = await space.getEnvironment(ENVIRONMENTID);
 
-    // Update contentmodel with new slug field
-    const updateContentModel = await updateContentType(space, environment);
+    // // Update contentmodel with new slug field
+    // const updateContentModel = await updateContentType(space, environment);
 
     // Change the appearance of newly added field to slug appearance
-    const updateAppeance = await updateAppearance(environment);
+    // const updateAppeance = await updateAppearance(environment);
 
     // Populate new field with value
-    if(updateContentModel && updateAppeance) {
-      const entries = await environment.getEntries({'content_type': CONTENT_TYPE})
+    // if(updateContentModel && updateAppeance) {
+      const entries = await environment.getEntries({
+        'content_type': CONTENT_TYPE,
+        'fields.slug[exists]': false
+      });
       for(entry of entries.items) {
         let item = await updateEntry(entry);
       }
-    }
+    // }
 
   } catch(err) {
-    log(`Error occured on run step `, err);
+    log(`Error occured on run step ${err}`);
   }
 }
 
