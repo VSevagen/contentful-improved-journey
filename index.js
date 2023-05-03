@@ -8,6 +8,7 @@ const SPACEID = config.space.spaceId
 const ENVIRONMENTID = config.space.environmentId;
 const CONTENT_TYPE = config.contentType.id;
 const LOCAL = config.space.locale;
+const FIELDNAME = config.contentType.fieldName;
 
 const client = contentful.createClient({
   accessToken: ACCESS_TOKEN
@@ -75,7 +76,7 @@ const updateEntry = async (entry) => {
         [LOCAL] :'New entry description'
       };
       
-      entry.fields.slug[LOCAL] = entry?.fields?.retailerName?.[LOCAL] ? slugify(entry?.fields?.retailerName?.[LOCAL]) : "";
+      entry.fields.slug[LOCAL] = entry?.fields?.[FIELDNAME]?.[LOCAL] ? slugify(entry?.fields?.[FIELDNAME]?.[LOCAL]) : "";
       
       let updatedEntry = await entry.update();
 
@@ -86,7 +87,7 @@ const updateEntry = async (entry) => {
 
       if(entry.isPublished()) {
         let publishedEntry = await updatedEntry.publish();
-        log(`Published ${publishedEntry?.fields?.retailerName[LOCAL]} id=${publishedEntry?.sys?.id}`)
+        log(`Published ${publishedEntry?.fields?.[FIELDNAME]?.[LOCAL]} id=${publishedEntry?.sys?.id}`)
         return publishedEntry;
       }
     }
