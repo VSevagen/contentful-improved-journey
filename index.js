@@ -112,7 +112,7 @@ const run = async () => {
 
     // Populate new field with value
     if(updateContentModel && updateAppeance) {
-      const entries = await environment.getEntries({'content_type': CONTENT_TYPE})
+      const entries = await environment.getEntries({'content_type': CONTENT_TYPE, limit: 1000})
       for(entry of entries.items) {
         let item = await updateEntry(entry);
       }
